@@ -1,4 +1,4 @@
-TOOLBOX_VER=v1.0.1
+TOOLBOX_VER=v1.0.2
 GREEN="\033[0;32m"
 BLUE="\033[1;34m"
 NORM="\033[0m"
@@ -32,14 +32,17 @@ echo "${YELLOW}10 ${NORM}${BLUE}Update Gracenote2 DB from gracenotedb folder on 
 echo "${YELLOW}11 ${NORM}${BLUE}Format navdb${NORM}"
 echo "${YELLOW}12 ${NORM}${BLUE}Activate wireless Android Auto & CarPlay${NORM}"
 echo "${YELLOW}13 ${NORM}${BLUE}Activate Baidu CarLife${NORM}"
-echo "${YELLOW}14 ${NORM}${BLUE}Add S Perfomance skin ${RED}ONLY Q3${NORM}"
-echo "${YELLOW}15 ${NORM}${BLUE}Add RS Perfomance skin ${RED}ONLY Q3${NORM}"
-echo "${YELLOW}16 ${NORM}${BLUE}Disable skin ${RED}ONLY Q3${NORM}"
-echo "${YELLOW}17 ${NORM}${BLUE}Enable fullscreen AA Carplay ${RED}ONLY Q3${NORM}"
-echo "${YELLOW}18 ${NORM}${BLUE}Enable fullscreen AA Carplay with statusbar ${RED}ONLY Q3${NORM}"
-echo "${YELLOW}19 ${NORM}${BLUE}Disable fullscreen AA Carplay ${RED}ONLY Q3${NORM}"
-echo "${YELLOW}20 ${NORM}${BLUE}Compass test patch ${RED}ONLY Q3${NORM}"
-echo "${YELLOW}21 ${NORM}${BLUE}Compass test patch OFF ${RED}ONLY Q3${NORM}"
+echo "${YELLOW}14 ${NORM}${BLUE}Add S Perfomance skin"
+echo "${YELLOW}15 ${NORM}${BLUE}Add RS Perfomance skin"
+echo "${YELLOW}16 ${NORM}${BLUE}Disable skin"
+echo "${YELLOW}17 ${NORM}${BLUE}Enable fullscreen AA Carplay"
+echo "${YELLOW}18 ${NORM}${BLUE}Enable fullscreen AA Carplay with statusbar"
+echo "${YELLOW}19 ${NORM}${BLUE}Disable fullscreen AA Carplay"
+echo "${YELLOW}20 ${NORM}${BLUE}Compass test patch"
+echo "${YELLOW}21 ${NORM}${BLUE}Compass test patch OFF"
+echo "${YELLOW}22 ${NORM}${BLUE}Disable ESIM${NORM}"
+echo "${YELLOW}23 ${NORM}${BLUE}Enable ESIM in automatic mode${NORM}"
+echo "${YELLOW}24 ${NORM}${BLUE}Activate developer mode${NORM}"
 echo "${YELLOW}99 ${NORM}${BLUE}Reboot the unit${NORM}"
 echo "${YELLOW} 0 ${NORM}${BLUE}Exit${NORM}"
 read sel?"Enter number of the function: "
@@ -601,6 +604,28 @@ case $sel in
 		fi
 		sync
 		[[ -e "/mnt/app" ]] && umount -f /mnt/app
+		s="Done. Reboot the unit.";echo $s;echo $s >> $dstPath/backup/device_info.txt
+		;;
+	22)
+		s="Disabling ESIM...";echo $s;echo $s >> $dstPath/backup/device_info.txt
+		[[ ! -d /mnt/app ]] && mount -t qnx6 /dev/mnanda0t177.1 /mnt/app
+		echo "5F coding before ESIM deactivation: $(/mnt/app/armle/usr/bin/pc b:0x5F22:0x600 | awk -F "  " '{ORS="";gsub(/ /,"",$2);print $2}' 2>/dev/null)" >> $dstPath/backup/device_info.txt
+		echo "5F adaptations before ESIM deactivation: $(/mnt/app/armle/usr/bin/pc b:0x5F22:0x098E | awk -F "  " '{ORS="";gsub(/ /,"",$2);print $2}' 2>/dev/null)" >> $dstPath/backup/device_info.txt
+		# Disable ESIM
+		/mnt/app/armle/usr/bin/pc b:0x5F22:0x098E 0
+		echo "5F coding after ESIM deactivation: $(/mnt/app/armle/usr/bin/pc b:0x5F22:0x600 | awk -F "  " '{ORS="";gsub(/ /,"",$2);print $2}' 2>/dev/null)" >> $dstPath/backup/device_info.txt
+		echo "5F adaptations after ESIM deactivation: $(/mnt/app/armle/usr/bin/pc b:0x5F22:0x098E | awk -F "  " '{ORS="";gsub(/ /,"",$2);print $2}' 2>/dev/null)" >> $dstPath/backup/device_info.txt
+		s="Done. Reboot the unit.";echo $s;echo $s >> $dstPath/backup/device_info.txt
+		;;
+	23) 
+		s="Enabling ESIM...";echo $s;echo $s >> $dstPath/backup/device_info.txt
+		[[ ! -d /mnt/app ]] && mount -t qnx6 /dev/mnanda0t177.1 /mnt/app
+		echo "5F coding before ESIM activation: $(/mnt/app/armle/usr/bin/pc b:0x5F22:0x600 | awk -F "  " '{ORS="";gsub(/ /,"",$2);print $2}' 2>/dev/null)" >> $dstPath/backup/device_info.txt
+		echo "5F adaptations before ESIM activation: $(/mnt/app/armle/usr/bin/pc b:0x5F22:0x098E | awk -F "  " '{ORS="";gsub(/ /,"",$2);print $2}' 2>/dev/null)" >> $dstPath/backup/device_info.txt
+		# Enable ESIM
+		/mnt/app/armle/usr/bin/pc b:0x5F22:0x098E 1
+		echo "5F coding after ESIM activation: $(/mnt/app/armle/usr/bin/pc b:0x5F22:0x600 | awk -F "  " '{ORS="";gsub(/ /,"",$2);print $2}' 2>/dev/null)" >> $dstPath/backup/device_info.txt
+		echo "5F adaptations after ESIM activation: $(/mnt/app/armle/usr/bin/pc b:0x5F22:0x098E | awk -F "  " '{ORS="";gsub(/ /,"",$2);print $2}' 2>/dev/null)" >> $dstPath/backup/device_info.txt
 		s="Done. Reboot the unit.";echo $s;echo $s >> $dstPath/backup/device_info.txt
 		;;
 	99)
