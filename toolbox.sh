@@ -1,4 +1,4 @@
-TOOLBOX_VER=v1.0.2
+TOOLBOX_VER=v1.0.3
 GREEN="\033[0;32m"
 BLUE="\033[1;34m"
 NORM="\033[0m"
@@ -43,6 +43,7 @@ echo "${YELLOW}21 ${NORM}${BLUE}Compass test patch OFF"
 echo "${YELLOW}22 ${NORM}${BLUE}Disable ESIM${NORM}"
 echo "${YELLOW}23 ${NORM}${BLUE}Enable ESIM in automatic mode${NORM}"
 echo "${YELLOW}24 ${NORM}${BLUE}Activate developer mode${NORM}"
+echo "${YELLOW}25 ${NORM}${BLUE}Backup LSD.JAR${NORM}"
 echo "${YELLOW}99 ${NORM}${BLUE}Reboot the unit${NORM}"
 echo "${YELLOW} 0 ${NORM}${BLUE}Exit${NORM}"
 read sel?"Enter number of the function: "
@@ -627,6 +628,12 @@ case $sel in
 		echo "5F coding after ESIM activation: $(/mnt/app/armle/usr/bin/pc b:0x5F22:0x600 | awk -F "  " '{ORS="";gsub(/ /,"",$2);print $2}' 2>/dev/null)" >> $dstPath/backup/device_info.txt
 		echo "5F adaptations after ESIM activation: $(/mnt/app/armle/usr/bin/pc b:0x5F22:0x098E | awk -F "  " '{ORS="";gsub(/ /,"",$2);print $2}' 2>/dev/null)" >> $dstPath/backup/device_info.txt
 		s="Done. Reboot the unit.";echo $s;echo $s >> $dstPath/backup/device_info.txt
+		;;
+	25)
+		s="Creating backup LSD.JAR...";echo $s;echo $s >> $dstPath/backup/device_info.txt
+		[[ ! -d /mnt/app ]] && mount -t qnx6 /dev/mnanda0t177.1 /mnt/app
+		cp -f /mnt/app/eso/hmi/lsd/lsd.jar $dstPath/backup/
+		s="Done.";echo $s;echo $s >> $dstPath/backup/device_info.txt
 		;;
 	99)
 		s="Rebooting the unit...";echo $s;echo $s >> $dstPath/backup/device_info.txt
